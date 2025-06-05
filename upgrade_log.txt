@@ -1,0 +1,151 @@
+PostgreSQL: postgres/Thangpassword
+aiuser/ai_password
+
+
+Đóng tất cả các trình duyệt và file đang mở.
+Mở Anaconda Prompt (với quyền Administrator).
+Kích hoạt môi trường ai_cv_env: conda activate ai_cv_env
+Điều hướng đến thư mục gốc của dự án AI_BigData_Sim: cd C:\Users\Oi Gioi Oi\Desktop\AI_BigData_Sim
+Chạy ứng dụng Flask: python app.py
+Bạn sẽ thấy các thông báo từ Flask, bao gồm dòng * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit).
+Mở trình duyệt web của bạn (Chrome, Firefox, Edge, v.v.).
+Truy cập địa chỉ: http://127.0.0.1:5000/
+	thangtv/Thang2025
+	vanthang/thANG25
+	123456a/THANG@2025
+
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 15:22:54
+Tính năng: I.1 Chức năng xóa ảnh riêng lẻ/hàng loạt
+Mô tả: Đã thêm chức năng xóa từng ảnh và xóa nhiều ảnh/tất cả ảnh khỏi bảng và thư mục uploads.
+       - Cập nhật app.py với route /delete_images để xử lý xóa.
+       - Cập nhật results.html để thêm checkbox, nút xóa và logic JavaScript để gửi yêu cầu xóa.
+       - Đã tích hợp Font Awesome để hiển thị biểu tượng thùng rác.
+
+--- END OF LOG ---
+
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 15:30:34
+Tính năng: I.2 Xem trước ảnh trước khi tải lên (Client-side Preview)
+Mô tả: Đã thêm chức năng xem trước thumbnail của ảnh được chọn trước khi gửi lên server.
+       - Cập nhật index.html để thêm khu vực preview và JavaScript để đọc/hiển thị ảnh.
+       - Cho phép kéo thả ảnh vào vùng preview.
+       - Có thể xóa từng ảnh khỏi danh sách đã chọn trước khi upload.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 15:47:25
+Tính năng: Khắc phục & Cải thiện Hiển thị
+Mô tả: Đã điều chỉnh để hiển thị tối ưu hơn:
+       - Thay đổi Bootstrap container thành container-fluid để tận dụng toàn bộ chiều rộng màn hình.
+       - Đảm bảo tải Font Awesome CDN để hiển thị các biểu tượng (như biểu tượng thùng rác).
+       - Kích hoạt "scrollX": true cho DataTables để hiển thị thanh cuộn ngang khi bảng quá rộng.
+       - Comment một số CSS để cho phép nội dung cột hiển thị đầy đủ hơn và thanh cuộn ngang hoạt động hiệu quả.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:07:02
+Tính năng: II.1 Đăng nhập và Đăng ký Người dùng
+Mô tả: Đã triển khai hệ thống quản lý người dùng với Flask-Login và Flask-SQLAlchemy.
+       - Tạo User Model để lưu trữ thông tin người dùng (username, email, password_hash).
+       - Tích hợp Flask-WTF để tạo các biểu mẫu Đăng ký và Đăng nhập an toàn.
+       - Tạo các route và template riêng biệt cho Đăng ký (/register) và Đăng nhập (/login).
+       - Áp dụng @login_required cho các route chính (/ , /upload_file, /results, /delete_images, /logout) để yêu cầu xác thực.
+       - Cập nhật các template index.html và results.html để hiển thị trạng thái đăng nhập và các liên kết liên quan.
+       - Cột 'uploaded_by_user_id' được thêm vào bảng image_metadata.db để theo dõi người tải lên.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:15:41
+Tính năng: Khắc phục Lỗi: ModuleNotFoundError cho Flask-Login và Flask-SQLAlchemy
+Mô tả: Đã cài đặt các thư viện Flask-Login, Flask-SQLAlchemy và Flask-WTF vào môi trường ảo 'ai_cv_env' để hỗ trợ chức năng quản lý người dùng.
+       - Thực hiện lệnh: pip install Flask-Login Flask-SQLAlchemy Flask-WTF
+       - Lỗi 'ModuleNotFoundError: No module named 'flask_login'' đã được khắc phục.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:18:06
+Tính năng: Khắc phục Lỗi và Tối ưu hóa (Lần 2)
+Mô tả: Đã khắc phục các lỗi sau:
+       - 'sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to open database file': Đã kiểm tra quyền truy cập thư mục 'database', đảm bảo không có tiến trình nào khóa file database, và đưa ra khuyến nghị xóa file database cũ nếu cần thiết.
+       - 'NameError: name 'charts' is not defined': Đã xác nhận lại việc khởi tạo biến 'charts = {}' trong hàm 'results()' của app.py để đảm bảo nó luôn được định nghĩa trước khi truyền vào template.
+       - 'PermissionError' và 'ModuleNotFoundError: No module named 'seaborn'' (đối với image_processor.py): Đã đưa ra hướng dẫn kiểm tra quyền ghi và cài đặt thư viện seaborn (và matplotlib) nếu cần thiết.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:25:00
+Tính năng: Cung cấp lại toàn bộ mã nguồn app.py
+Mô tả: Đã cung cấp lại toàn bộ mã nguồn của file app.py để đảm bảo đồng bộ hóa các thay đổi liên quan đến quản lý người dùng (Flask-Login, Flask-SQLAlchemy, Forms), xử lý database SQLite cho metadata ảnh, và các chức năng tải/xóa ảnh, tạo biểu đồ.
+       - Đã thêm microseconds vào tên file ảnh độc nhất để tránh trùng lặp.
+       - Đảm bảo biến 'charts' luôn được khởi tạo trong hàm results().
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:33:17
+Tính năng: Khắc phục Lỗi Database và Đảm bảo Đồng bộ Code
+Mô tả: Đã thực hiện các bước để giải quyết triệt để lỗi 'sqlalchemy.exc.OperationalError: unable to open database file' và 'NameError: name 'chart_paths' is not defined'.
+       - Yêu cầu người dùng dán đè toàn bộ mã nguồn app.py mới nhất để đảm bảo đồng bộ code.
+       - Hướng dẫn tắt mọi tiến trình Python/Flask đang chạy và xóa file database cũ (users.db, image_metadata.db) để loại bỏ khóa file và bắt đầu lại sạch sẽ.
+       - Nhấn mạnh việc kiểm tra quyền truy cập thư mục 'database' và khuyến nghị chạy Anaconda Prompt với quyền quản trị viên.
+       - Xác nhận rằng biến 'charts' luôn được khởi tạo trong hàm 'results()' để tránh lỗi NameError.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:40:22
+Tính năng: Khắc phục Lỗi Database Triệt để (Lần 2)
+Mô tả: Tiếp tục khắc phục lỗi 'sqlalchemy.exc.OperationalError: unable to open database file'. Đã xác nhận file app.py là phiên bản mới nhất và quyền truy cập thư mục gốc đã đầy đủ.
+       - Tập trung vào việc tắt triệt để mọi tiến trình Python/Flask thông qua Ctrl+C và Task Manager.
+       - Nhấn mạnh việc xóa file database cũ (users.db, image_metadata.db) là bước quan trọng để giải phóng khóa file.
+       - Giữ khuyến nghị chạy Anaconda Prompt với quyền quản trị viên.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:47:31
+Tính năng: Chuyển đổi Cơ sở dữ liệu sang PostgreSQL (Phần 1)
+Mô tả: Bắt đầu quá trình chuyển đổi từ SQLite sang PostgreSQL để khắc phục lỗi 'unable to open database file' liên tục.
+       - Đã hoàn thành cài đặt PostgreSQL Server (phiên bản X.X) với pgAdmin 4.
+       - Đã tạo cơ sở dữ liệu 'ai_image_db' và người dùng 'aiuser' với mật khẩu đã định cấu hình trong pgAdmin.
+       - Đã cài đặt thư viện 'psycopg2-binary' vào môi trường ảo 'ai_cv_env' bằng lệnh: pip install psycopg2-binary SQLAlchemy.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 16:59:47
+Tính năng: Chuyển đổi Cơ sở dữ liệu sang PostgreSQL (Phần 2)
+Mô tả: Hoàn thành việc chuyển đổi ứng dụng sang sử dụng PostgreSQL làm cơ sở dữ liệu chính.
+       - Cập nhật cấu hình 'SQLALCHEMY_DATABASE_URI' trong app.py để trỏ đến PostgreSQL.
+       - Chuyển đổi bảng metadata ảnh (trước đây là SQLite thủ công) thành mô hình SQLAlchemy 'ImageMetadata'.
+       - Thay thế tất cả các tương tác database (tạo, đọc, cập nhật, xóa) bằng các phương thức của SQLAlchemy (db.session.add, db.session.commit, query.all(), query.delete(), v.v.).
+       - Cập nhật hàm 'generate_charts' để hiển thị tên người dùng thay vì ID trong biểu đồ.
+       - Loại bỏ các đoạn code liên quan đến SQLite thủ công.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-04 17:11:44
+Tính năng: Khắc phục lỗi PostgreSQL InsufficientPrivilege (Cập nhật)
+Mô tả: Tiếp tục khắc phục lỗi 'permission denied for schema public'.
+       - Đã thử xóa và tạo lại database và người dùng trong pgAdmin để đảm bảo sạch sẽ.
+       - Cấp quyền 'ALL' trên cả database 'ai_image_db' và schema 'public' cho người dùng 'aiuser' để đảm bảo quyền đầy đủ.
+       - Yêu cầu khởi động lại Anaconda Prompt với quyền quản trị viên và chạy lại ứng dụng.
+
+--- END OF LOG ---
+--- Nhật ký Nâng cấp Ứng dụng AI Image Analyzer ---
+
+Ngày: 2025-06-05 13:22:00
+Tính năng: Khắc phục lỗi UndefinedError trên frontend
+Mô tả: Đã gặp lỗi UndefinedError liên quan đến trường 'email' trong template HTML.
+       - Hướng dẫn cập nhật file 'register.html' để loại bỏ mọi tham chiếu đến 'form.email'.
+       - Xác nhận rằng frontend sẽ hiển thị đúng form đăng ký sau khi thay đổi.
+
+--- END OF LOG ---

@@ -1,0 +1,70 @@
+/* Custom CSS */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif; /* Đảm bảo font hiển thị tiếng Việt */
+}
+.container {
+    max-width: 960px;
+}
+.card {
+    border: none;
+    border-radius: 0.75rem;
+}
+.chart-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    cursor: pointer; /* Hiển thị con trỏ dạng pointer khi di chuột qua ảnh biểu đồ */
+}
+.table-responsive {
+    border-radius: 0.75rem;
+    overflow: hidden; /* Ensure rounded corners apply to table */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+/* Thêm style để tùy chỉnh kích thước cột của bảng */
+.table th, .table td {
+    font-size: 0.9rem; /* Giảm kích thước font cho bảng */
+    white-space: nowrap; /* Ngăn không cho nội dung bị xuống dòng trong ô */
+    overflow: hidden;    /* Ẩn nội dung tràn ra ngoài */
+    text-overflow: ellipsis; /* Hiển thị dấu ba chấm nếu nội dung bị cắt */
+    max-width: 150px; /* Giới hạn chiều rộng tối đa của cột */
+}
+/* Giảm kích thước font cho header và cell trong bảng */
+.table th {
+    font-size: 0.85rem;
+}
+.table td {
+    font-size: 0.8rem;
+}
+
+/* Style cho ảnh thumbnail trong bảng */
+.table-thumbnail {
+    width: 50px; /* Kích thước ảnh thumbnail trong bảng */
+    height: 50px;
+    object-fit: cover; /* Đảm bảo ảnh không bị méo và lấp đầy khung */
+    border-radius: 5px;
+    cursor: pointer; /* Cho biết có thể click để xem ảnh lớn */
+}
+
+/* Styles cho chức năng Zoom */
+#modalImageContainer {
+    overflow: hidden; /* Quan trọng để ẩn phần ảnh tràn ra khi zoom/kéo */
+    position: relative;
+    cursor: grab;
+    display: flex; /* Dùng flexbox để canh giữa ảnh khi chưa zoom */
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+#modalImage {
+    transform-origin: 0 0; /* Gốc transform ở góc trên bên trái để dễ dàng tính toán kéo */
+    transition: transform 0.1s ease-out; /* Tạo hiệu ứng chuyển động mượt mà */
+    max-width: 100%; /* Đảm bảo ảnh không tràn ra khỏi container ban đầu */
+    max-height: 100%;
+    object-fit: contain; /* Đảm bảo ảnh vừa với khung khi chưa zoom */
+}

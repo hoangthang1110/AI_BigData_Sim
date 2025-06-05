@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả Phân tích Ảnh - AI Image Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles if needed */
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-indigo-600 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('index') }}" class="text-white text-xl font-bold">AI Image Analyzer</a>
+            <div class="space-x-4">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('index') }}" class="text-white hover:text-indigo-200">Tải ảnh</a>
+                    <a href="{{ url_for('results') }}" class="text-white hover:text-indigo-200">Kết quả phân tích</a>
+                    <span class="text-indigo-200">Xin chào, {{ current_user.username }}!</span>
+                    <a href="{{ url_for('logout') }}" class="text-white hover:text-indigo-200">Đăng xuất</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="text-white hover:text-indigo-200">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}" class="text-white hover:text-indigo-200">Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Kết quả Phân tích Ảnh</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6">
+                    {% for category, message in messages %}
+                        <div class="p-3 mb-2 rounded-md {% if category == 'success' %}bg-green-100 text-green-800{% elif category == 'danger' %}bg-red-100 text-red-800{% elif category == 'info' %}bg-blue-100 text-blue-800{% elif category == 'warning' %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Dữ liệu ảnh đã tải lên</h3>
+            
+            <div class="overflow-x-auto mb-4">
+                {% if df_rows %}
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STT</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên File</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ảnh</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Danh mục AI dự đoán</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Độ tin cậy</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Top 3 dự đoán</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian tải lên</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <input type="checkbox" id="selectAllCheckbox">
+                                <label for="selectAllCheckbox" class="ml-2">Chọn</label>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for row in df_rows %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ row.STT }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.file_name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img src="{{ url_for('serve_uploaded_file', filename=row.file_name) }}" alt="Uploaded Image" class="h-16 w-16 object-cover rounded shadow-sm">
+                            </td>
+                            <td class="px-6 py-4 whitespace-wrap text-sm text-gray-900">{{ row.ai_predicted_category }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.ai_prediction_confidence_display }}</td>
+                            <td class="px-6 py-4 whitespace-wrap text-sm text-gray-900">{{ row.ai_top_3_predictions }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.upload_timestamp }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <input type="checkbox" class="image-checkbox form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" data-image-path="{{ row.image_path }}" data-image-id="{{ row.id }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-center text-gray-500 py-8">Chưa có dữ liệu ảnh nào được tải lên hoặc phân tích.</p>
+                {% endif %}
+            </div>
+
+            {% if df_rows %}
+            <div class="flex justify-end space-x-4 mt-4">
+                <button id="deleteSelectedBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Xóa ảnh đã chọn</button>
+                <button id="deleteAllBtn" class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Xóa tất cả ảnh</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Biểu đồ Phân tích</h3>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% if charts.bar_chart %}
+                <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <img src="{{ charts.bar_chart }}" alt="Bar Chart" class="w-full h-auto">
+                </div>
+                {% endif %}
+                {% if charts.pie_chart %}
+                <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <img src="{{ charts.pie_chart }}" alt="Pie Chart" class="w-full h-auto">
+                </div>
+                {% endif %}
+                {% if charts.user_uploads_chart %}
+                <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <img src="{{ charts.user_uploads_chart }}" alt="User Uploads Chart" class="w-full h-auto">
+                </div>
+                {% endif %}
+            </div>
+            {% if not charts.bar_chart and not charts.pie_chart and not charts.user_uploads_chart %}
+                <p class="text-center text-gray-500 py-8">Chưa có dữ liệu để tạo biểu đồ.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const imageCheckboxes = document.querySelectorAll('.image-checkbox');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            const deleteAllBtn = document.getElementById('deleteAllBtn');
+
+            if (selectAllCheckbox) { // Check if elements exist before attaching listeners
+                selectAllCheckbox.addEventListener('change', function() {
+                    imageCheckboxes.forEach(checkbox => {
+                        checkbox.checked = selectAllCheckbox.checked;
+                    });
+                });
+            }
+
+            if (deleteSelectedBtn) {
+                deleteSelectedBtn.addEventListener('click', function() {
+                    const selectedImagePaths = [];
+                    imageCheckboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            selectedImagePaths.push(checkbox.dataset.imagePath);
+                        }
+                    });
+
+                    if (selectedImagePaths.length > 0) {
+                        if (confirm(`Bạn có chắc chắn muốn xóa ${selectedImagePaths.length} ảnh đã chọn?`)) {
+                            sendDeleteRequest(selectedImagePaths, false);
+                        }
+                    } else {
+                        alert('Vui lòng chọn ít nhất một ảnh để xóa.');
+                    }
+                });
+            }
+
+            if (deleteAllBtn) {
+                deleteAllBtn.addEventListener('click', function() {
+                    if (confirm('Bạn có chắc chắn muốn xóa TẤT CẢ ảnh? Thao tác này không thể hoàn tác.')) {
+                        sendDeleteRequest([], true);
+                    }
+                });
+            }
+
+            function sendDeleteRequest(imagePaths, deleteAll) {
+                fetch('{{ url_for("delete_images") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image_paths: imagePaths, delete_all: deleteAll }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message);
+                        window.location.reload(); // Reload the page to show updated data
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi gửi yêu cầu xóa:', error);
+                    alert('Đã xảy ra lỗi khi xóa ảnh.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
